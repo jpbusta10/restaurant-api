@@ -10,7 +10,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - 4000:4000
+      - 3000:3000
     depends_on:
       - db
     command: sh -c "npm install && npm start"
