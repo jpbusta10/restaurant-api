@@ -1,0 +1,36 @@
+services:
+  app:
+    container_name: restaurant-api
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+       - .env
+    volumes:
+      - .:/app
+    ports:
+      - 4000:4000
+    depends_on:
+      - db
+    command: sh -c "npm install && npm start"
+
+  db:
+    container_name: db
+    image: postgres:latest
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DATABASE}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./src/db/schemas/restaurant.sql:/docker-entrypoint-initdb.d/restaurant.sql
+      
+    ports:
+      - 5432:5432
+
+volumes:
+  db_data:
