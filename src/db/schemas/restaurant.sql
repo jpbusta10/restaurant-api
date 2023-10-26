@@ -1,8 +1,9 @@
-DROP DATABASE IF EXISTS reservations;
-CREATE DATABASE reservations;
 create extension if not exists "uuid-ossp";
 
-
+create table roles (
+    rol_id uuid default uuid_generate_v4() primary key unique not null,
+    rol_name varchar(256) not null
+);
 create table users (
     user_id uuid default uuid_generate_v4() primary key unique not null,
     first_name varchar(256) NOT NULL,
@@ -22,10 +23,7 @@ create table restaurants (
 
     constraint fk_manager_id foreign key (manager_id) references users (user_id) on delete cascade
 );
-create table roles (
-    rol_id uuid default uuid_generate_v4() primary key unique not null,
-    rol_name varchar(256) not null
-);
+
 create table tables (
     table_id uuid default uuid_generate_v4() primary key unique not null,
     table_name varchar(256),
@@ -34,12 +32,9 @@ create table tables (
     capacity integer not null,
     constraint fk_restaurant_id foreign key (restaurant_id) references restaurants (restaurant_id) on delete cascade
 );
-create table reservation_table (
-    reservation_table_id uuid default uuid_generate_v4() primary key unique not null,
-    table_id uuid not null,
-    reservation_id uuid not null,
-    constraint fk_table_id foreign key (table_id) references tables (table_id) on delete cascade,
-    constraint fk_reservation_id foreign key (reservation_id) references reservations (reservation_id) on delete cascade
+create table states(
+    state_id uuid default uuid_generate_v4() primary key unique not null,
+    state_name varchar(256) not null
 );
 create table reservations (
     reservation_id uuid default uuid_generate_v4() primary key unique not null,
@@ -54,10 +49,15 @@ create table reservations (
     constraint fk_restaurant_id foreign key (restaurant_id) references restaurants (restaurant_id) on delete cascade,
     constraint fk_res_state foreign key (state_id) references states (state_id) on delete cascade
 );
-create table states(
-    state_id uuid default uuid_generate_v4() primary key unique not null,
-    state_name varchar(256) not null
+create table reservation_table (
+    reservation_table_id uuid default uuid_generate_v4() primary key unique not null,
+    table_id uuid not null,
+    reservation_id uuid not null,
+    constraint fk_table_id foreign key (table_id) references tables (table_id) on delete cascade,
+    constraint fk_reservation_id foreign key (reservation_id) references reservations (reservation_id) on delete cascade
 );
+
+
 create table categories (
     id_categories uuid default uuid_generate_v4() primary key unique not null,
     categorie_name varchar(256)
