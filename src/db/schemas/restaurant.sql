@@ -10,7 +10,7 @@ create table users (
     last_name varchar(256) NOT NULL,
     email varchar(256) NOT NULL,
     hashed_pass char(97) not null,
-    user_name varchar(256) not null,
+    user_name varchar(256) not null unique,
     dni varchar(256) not null,
     rol_id uuid not null,
     constraint fk_rol_id foreign key (rol_id) references roles (rol_id) on delete cascade
@@ -77,3 +77,6 @@ create table favorites (
     constraint fk_user_id foreign key (user_id) references users (user_id) on delete cascade,
     constraint fk_restaurant_id foreign key (restaurant_id) references restaurants (restaurant_id) on delete cascade
 );
+
+insert into roles (rol_name) values ('client');
+insert into roles (rol_name) values ('res_admin');
