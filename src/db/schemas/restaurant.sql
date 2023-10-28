@@ -8,7 +8,7 @@ create table users (
     user_id uuid default uuid_generate_v4() primary key unique not null,
     first_name varchar(256) NOT NULL,
     last_name varchar(256) NOT NULL,
-    email varchar(256) NOT NULL,
+    email varchar(256) NOT NULL unique,
     hashed_pass char(97) not null,
     user_name varchar(256) not null unique,
     dni varchar(256) not null,

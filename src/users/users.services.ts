@@ -14,6 +14,15 @@ export class UserService{
      create(newUser: UserDTO){
        return this.userRepository.createUser(newUser);
     }
+    getByEmail(email:string){
+
+        return this.userRepository.getUserByEmail(email);
+
+    }
+    getHashedPass(email: string){
+        return this.userRepository.getHashedPassword(email);
+    }
+    
 
 
 }
