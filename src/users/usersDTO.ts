@@ -2,16 +2,16 @@ import { ReservationsDTO } from "src/reservations/reservationsDTO";
 import { RestaurantsDTO } from "src/restaurants/restaurantsDTO";
 
 export class UserDTO{
-    private _id: string;
-    private _userName: string;
-    private _firstName: string;
-    private _lastName: string;
-    private _email: string;
-    private _dni: string;
-    private _hashedPass?: string;
-    private _reservations: Array<ReservationsDTO>;
-    private _favourites: Array<RestaurantsDTO>;
-    private _role: string; 
+     _id: string;
+     _userName: string;
+     _firstName: string;
+     _lastName: string;
+     _email: string;
+     _dni: string;
+     _hashedPass?: string;
+     _reservations: Array<ReservationsDTO>;
+     _favourites: Array<RestaurantsDTO>;
+     _role: string; 
 
     constructor(id: string | null, userName:string, firstName: string, lastName: string,
         email:string, dni: string, reservations: Array<ReservationsDTO> | null,

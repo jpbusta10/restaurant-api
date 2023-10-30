@@ -14,9 +14,19 @@ export class UsersController {
     @Get()
     async listUsers(@Res() res: Response){
         const users: UserDTO[] = await this.userService.getAll();
-        const jsonArray = JSON.stringify(users);
+         const transformedUsers = users.map(user => ({
+            id: user._id,
+            userName: user._userName,
+            firstName: user._firstName,
+            lastName: user._lastName,
+            email: user._email,
+            dni: user._dni,
+            reservations: user._reservations,
+            favourites: user._favourites,
+            role: user._role,
+          }));
         res.setHeader('Content-Type', 'application/json');
-        res.send(users);
+        res.send(transformedUsers);
     }
     @Post()
     async createUser(@Body() jsonData: any){
