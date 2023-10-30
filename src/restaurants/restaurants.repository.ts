@@ -41,7 +41,7 @@ export class RestaurantRepository{
         }
     }
     async getByName(name:string):Promise<RestaurantsDTO>{
-        const queryText = 'select restaurant_id, adress, manager_id where res_name = $1';
+        const queryText = 'select restaurant_id, adress, manager_id from restaurants where res_name = $1';
         try{
             const response = await pool.query(queryText, [name]);
             const row = response.rows[0];
