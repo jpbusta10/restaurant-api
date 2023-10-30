@@ -10,4 +10,4 @@ RUN npm install -g ts-node
 
 COPY . .
 
-CMD [ "npm run", "start:dev" ]
+CMD [ "npm run", "start" ]
