@@ -48,6 +48,6 @@ export class RestaurantRepository{
             return new RestaurantsDTO(row.restaurant_id, name, row.adress, row.manager_id);
         }catch(error){
             throw new Error(`Error getting resto: ${error.message}`)
-        }
+        }   
     }
 }
