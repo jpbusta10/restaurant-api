@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Res } from '@nestjs/common';
 import { UserService } from './users.services';
 import { UserDTO } from './usersDTO';
 import * as argon2 from "argon2";
+import { Response } from 'express'; 
 
 
 
@@ -11,10 +12,11 @@ export class UsersController {
     constructor(public userService: UserService){
     };
     @Get()
-    async listUsers(){
+    async listUsers(@Res() res: Response){
         const users: UserDTO[] = await this.userService.getAll();
         const jsonArray = JSON.stringify(users);
-        return jsonArray;
+        res.setHeader('Content-Type', 'application/json');
+        res.send(users);
     }
     @Post()
     async createUser(@Body() jsonData: any){
