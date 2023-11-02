@@ -24,13 +24,14 @@ create table restaurants (
     constraint fk_manager_id foreign key (manager_id) references users (user_id) on delete cascade
 );
 
-create table tables (
-    table_id uuid default uuid_generate_v4() primary key unique not null,
-    table_name varchar(256),
-    isReserved boolean,
-    restaurant_id uuid not null,
-    capacity integer not null,
-    constraint fk_restaurant_id foreign key (restaurant_id) references restaurants (restaurant_id) on delete cascade
+CREATE TABLE tables (
+    table_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
+    table_number INTEGER NOT NULL,
+    isReserved BOOLEAN,
+    restaurant_id UUID NOT NULL,
+    capacity INTEGER NOT NULL,
+    CONSTRAINT uc_table_number_per_restaurant UNIQUE (table_number, restaurant_id),
+    CONSTRAINT fk_restaurant_id FOREIGN KEY (restaurant_id) REFERENCES restaurants (restaurant_id) ON DELETE CASCADE
 );
 create table states(
     state_id uuid default uuid_generate_v4() primary key unique not null,
