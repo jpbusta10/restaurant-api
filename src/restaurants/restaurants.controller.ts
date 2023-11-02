@@ -8,6 +8,7 @@ export class RestaurantsController {
     };
     @Get()
     async listRestaurants(@Res() res: Response) {
+        try{
         const restaurants: RestaurantsDTO[] = await this.restaurantService.getAll();
         const transformRestaurants = restaurants.map(restaurant => ({
             id: restaurant._id,
@@ -17,15 +18,26 @@ export class RestaurantsController {
         }));
         res.setHeader('Content-Type', 'application/json');
         res.send(transformRestaurants);
+    }catch(error){
+        return{
+            "message": error.message
+        }
+    }
     };
     @Post()
     async createResto(@Body() data: any) {
+        try{
         const newResto = new RestaurantsDTO(null, data.name, data.adress, data.manager_id);
         const res = await this.restaurantService.create(newResto);
         return {
             "message": "created",
             "id": res._id
         }
+    }catch(error){
+        return{
+            "message": error.message 
+        }
+    }
     }
     @Get("/id")
     async getById(@Body() data: any) {

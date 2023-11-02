@@ -13,6 +13,7 @@ export class UsersController {
     };
     @Get()
     async listUsers(@Res() res: Response){
+        try{
         const users: UserDTO[] = await this.userService.getAll();
          const transformedUsers = users.map(user => ({
             id: user._id,
@@ -27,9 +28,15 @@ export class UsersController {
           }));
         res.setHeader('Content-Type', 'application/json');
         res.send(transformedUsers);
+        }catch(error){
+            res.send({
+                "message": error.message
+            })
+        }
     }
     @Post()
     async createUser(@Body() jsonData: any){
+        try{
         const hashedPass = await argon2.hash(jsonData.password);
         const newUser = new UserDTO(null, jsonData.userName, jsonData.firstName, jsonData.lastName, jsonData.email,
             jsonData.dni, null, null, jsonData.role, hashedPass);
@@ -37,6 +44,11 @@ export class UsersController {
         return {
             "message": "created",
             "id": res.id
+        }
+        }catch(error){
+            return{
+                "message": error.message
+            }
         }
     }
     @Get("/email")
