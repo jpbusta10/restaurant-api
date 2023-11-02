@@ -59,7 +59,9 @@ export class ReservationsRepository{
            await reservations.forEach(reservation =>{
                 const queryTable =  pool.query(tablesQueryText, [reservation._id]);
                 const tables: TableDTO[] = queryTable.rows.map(row =>{new TableDTO(row.table_id, row.table_number, row.capacity, row.restaurant_id)})
-                for()
+                for(let i=0; i< tables.length; i++){
+                    reservation._tables.push(tables[i]);
+                }
             })
             return reservations;
         }catch(error){
