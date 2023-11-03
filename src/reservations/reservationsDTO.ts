@@ -19,6 +19,6 @@ export class ReservationsDTO{
         this._due_date = due_date;
         this._res_date = res_date;
         this._comment = comment
-        this._tables = tables
+        this._tables = tables || [];
     }
 }

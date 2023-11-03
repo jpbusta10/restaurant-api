@@ -52,7 +52,7 @@ export class RestaurantRepository{
         }   
     }
     async createTable(newTable: TableDTO):Promise<TableDTO>{
-        const queryText = 'insert into tables (table_number, restaurant_id, capacity) values ($1, $2, $3, $4) returning table_id';
+        const queryText = 'insert into tables (table_number, restaurant_id, capacity) values ($1, $2, $3) returning table_id';
         const values = [
             newTable._number,
             newTable._restaurant_id,

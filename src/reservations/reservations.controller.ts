@@ -25,7 +25,7 @@ export class ReservationsController {
             }
         }
     }
-    @Get("/:id")
+    @Get("/get/:id")
    async listReservationByResto(@Param('id')id:string){
         try{
         const reservations:ReservationsDTO[] = await this.reservationsService.getRestaurantReservations(id);
@@ -42,6 +42,20 @@ export class ReservationsController {
     } catch(error){
         return{
             "error": error.message
+        }
+    }
+   }
+   @Post("/confirm")
+   async confirReservation(@Body() data:any){
+    try{
+        const tables = data.tables;
+        const response = await this.reservationsService.cofirmReservation(data.restaurant_id, tables, data.reservation_id, data.state);
+        return{
+            "message": "state change succesfull"
+        }
+    }catch(error){
+        return{
+            "message": error.message
         }
     }
    }
