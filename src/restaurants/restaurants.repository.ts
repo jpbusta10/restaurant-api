@@ -52,10 +52,9 @@ export class RestaurantRepository{
         }   
     }
     async createTable(newTable: TableDTO):Promise<TableDTO>{
-        const queryText = 'insert into tables (table_number, isReserved, restaurant_id, capacity) values ($1, $2, $3, $4) returning table_id';
+        const queryText = 'insert into tables (table_number, restaurant_id, capacity) values ($1, $2, $3) returning table_id';
         const values = [
             newTable._number,
-            newTable._isReserved,
             newTable._restaurant_id,
             newTable._capacity
         ];
@@ -71,7 +70,7 @@ export class RestaurantRepository{
         const queryText = 'select table_id, table_number, isReserved, capacity from tables where restaurant_id = $1';
         try{
             const result = await pool.query(queryText, [restaurant_id]);
-            return result.rows.map((row)=> new TableDTO(row.table_id, row.table_number, row.capacity, row.isReserved, restaurant_id))
+            return result.rows.map((row)=> new TableDTO(row.table_id, row.table_number, row.capacity, restaurant_id))
         }catch(error){
             throw new Error(`Error getting tables ${error.message}`);
         }

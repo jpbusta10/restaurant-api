@@ -81,3 +81,41 @@ create table favorites (
 
 insert into roles (rol_name) values ('client');
 insert into roles (rol_name) values ('res_admin');
+insert into states (state_name) values ('confirmed');
+insert into states (state_name) values ('toConfirm');
+insert into states (state_name) values ('cancelled');
+
+CREATE OR REPLACE PROCEDURE create_reservation(
+    p_user_id uuid,
+    p_restaurant_id uuid,
+    p_state_name varchar(256),
+    p_res_size integer,
+    p_due_date timestamp,
+    p_comment varchar(256)
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    reservation_id uuid;
+    state_id uuid;
+BEGIN
+    BEGIN
+        SELECT state_id INTO state_id FROM states WHERE state_name = p_state_name;
+        IF state_id IS NULL THEN
+            RAISE EXCEPTION 'State with name % not found', p_state_name;
+        END IF;
+
+        -- Your INSERT statement here
+        INSERT INTO reservations (user_id, restaurant_id, state_id, res_size, due_date, comment)
+        VALUES (p_user_id, p_restaurant_id, states.state_id, p_res_size, p_due_date, p_comment)
+        RETURNING reservation_id INTO reservation_id;
+
+        -- Handle success here
+
+    EXCEPTION
+        WHEN others THEN
+            -- In case of an error, handle the exception
+            RAISE EXCEPTION 'Error creating reservation: %', SQLERRM;
+    END;
+END;
+$$;

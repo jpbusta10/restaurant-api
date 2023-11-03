@@ -77,7 +77,7 @@ export class RestaurantsController {
     }
     @Post("/table")
     async createTable(@Body() data:any){
-       try{ const newTable = new TableDTO(null, data.tableNumber, data.capacity, data.isReserved, data.restaurant_id);
+       try{ const newTable = new TableDTO(null, data.tableNumber, data.capacity, data.restaurant_id);
         const res = await this.restaurantService.createTable(newTable);
         return {
             "message": "created",
@@ -96,8 +96,7 @@ export class RestaurantsController {
             const transformedTables = tables.map(table=>({
                 id: table._id,
                 number: table._number,
-                capacity: table._capacity,
-                isReserved: table._isReserved
+                capacity: table._capacity
             }))
             res.setHeader('Content-Type', 'application/json');
             res.send(transformedTables);
