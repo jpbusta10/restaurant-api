@@ -40,9 +40,8 @@ export class RestaurantsController {
         }
     }
     }
-    @Get("/id")
-    async getById(@Body() data: any) {
-        const id = data.id;
+    @Get("id/:id")
+    async getById(@Param('id') id:string) {
         try {
             const res: RestaurantsDTO = await this.restaurantService.getById(id);
             const transformRes = {
