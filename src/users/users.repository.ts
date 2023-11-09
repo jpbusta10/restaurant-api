@@ -197,10 +197,20 @@ export class UsersRepository {
         try {
             const result = await pool.query(query, [email]);
             const hashed_pass = result.rows[0]?.hashed_pass;
-            console.log(hashed_pass);
             return hashed_pass || null;
         } catch (error) {
             throw new Error(`Error retrieving password: ${error.message}`);
+        }
+    }
+    async addToFavourites(userid: string, restaurant_id: string){
+        const queryText = 'insert into favorites (user_id, restaurant_id) values ($1, $2) returning favorites_id';
+
+        try{
+            const result = await pool.query(queryText, [userid, restaurant_id]);
+            return result.rows[0].favorites_id
+
+        }catch(error){
+            throw new Error(error.message)
         }
     }
     

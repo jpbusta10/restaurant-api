@@ -22,6 +22,7 @@ export class UserService{
     getHashedPass(email: string){
         return this.userRepository.getHashedPassword(email);
     }
+    addFauvorites(userId:string, )
     
 
 

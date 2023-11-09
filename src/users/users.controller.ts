@@ -62,5 +62,8 @@ export class UsersController {
         }
     }
     }
+    async addToFavourites(@Body() JsonData: any){
+        
+    }
     
 }
