@@ -202,7 +202,7 @@ export class UsersRepository {
             throw new Error(`Error retrieving password: ${error.message}`);
         }
     }
-    async addToFavourites(userid: string, restaurant_id: string){
+    async addToFavourites(userid: string, restaurant_id: string): Promise<string>{
         const queryText = 'insert into favorites (user_id, restaurant_id) values ($1, $2) returning favorites_id';
 
         try{

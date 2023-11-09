@@ -22,7 +22,9 @@ export class UserService{
     getHashedPass(email: string){
         return this.userRepository.getHashedPassword(email);
     }
-    addFauvorites(userId:string, )
+    addFauvorites(userId:string, restaurant_id: string){
+        return this.userRepository.addToFavourites(userId, restaurant_id);
+    }
     
 
 
