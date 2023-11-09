@@ -22,7 +22,11 @@ export class UsersController {
             email: user._email,
             dni: user._dni,
             reservations: user._reservations,
-            favourites: user._favourites,
+            favourites: user._favourites.map(favorite=>({
+                id: favorite._id,
+                name: favorite._name,
+                adress: favorite._adress,
+            })),
             role: user._role,
           }));
         res.setHeader('Content-Type', 'application/json');
@@ -61,6 +65,27 @@ export class UsersController {
             message: "wrong password"
         }
     }
+    }
+    @Post("/favorites")
+    async addToFavourites(@Body() data: any){
+        try{
+            const idFav = await this.userService.addFauvorites(data.user_id, data.restaurant_id);
+            console.log(idFav);
+            return{
+                "message": "created",
+                "id": idFav
+            }
+        }catch(error){
+            return {
+                "message": "error adding fav",
+                "error": error.message
+            }
+        }
+        
+
+
+
+
     }
     
 }

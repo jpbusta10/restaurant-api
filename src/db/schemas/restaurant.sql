@@ -76,7 +76,9 @@ create table favorites (
     user_id uuid not null,
     restaurant_id uuid not null,
     constraint fk_user_id foreign key (user_id) references users (user_id) on delete cascade,
-    constraint fk_restaurant_id foreign key (restaurant_id) references restaurants (restaurant_id) on delete cascade
+    constraint fk_restaurant_id foreign key (restaurant_id) references restaurants (restaurant_id) on delete cascade,
+    constraint unq_fav_per_user unique (user_id, restaurant_id)
+
 );
 
 insert into roles (rol_name) values ('client');
