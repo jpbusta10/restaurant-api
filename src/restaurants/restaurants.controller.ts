@@ -14,7 +14,8 @@ export class RestaurantsController {
             id: restaurant._id,
             name: restaurant._name,
             adress: restaurant._adress,
-            manager_id: restaurant._managerId
+            manager_id: restaurant._managerId,
+            categories: restaurant._categories
         }));
         res.setHeader('Content-Type', 'application/json');
         res.send(transformRestaurants);
@@ -36,7 +37,8 @@ export class RestaurantsController {
                 id: res._id,
                 name: res._name,
                 adress: res._adress,
-                manager_id: res._managerId
+                manager_id: res._managerId,
+                categories: res._categories
             }
             return transformRes;
         } catch (error) {
@@ -53,7 +55,9 @@ export class RestaurantsController {
                 id: res._id,
                 name: res._name,
                 adress: res._adress,
-                manager_id: res._managerId
+                manager_id: res._managerId,
+                categories: res._categories
+
             }
             return transformRes;
         } catch (error) {
