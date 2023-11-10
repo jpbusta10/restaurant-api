@@ -29,7 +29,7 @@ export class RestaurantsController {
         }
     }
     @Get("id/:id")
-    async getById(@Param('id') id:string) {
+    async getById(@Param('id') id: string) {
         try {
             const res: RestaurantsDTO = await this.restaurantService.getById(id);
             const transformRes = {
@@ -56,41 +56,67 @@ export class RestaurantsController {
                 manager_id: res._managerId
             }
             return transformRes;
-        }catch(error){
+        } catch (error) {
             return {
                 "message": `Error: ${error.message}`
             }
         }
     }
     @Post("/table")
-    async createTable(@Body() data:any){
-       try{ const newTable = new TableDTO(null, data.tableNumber, data.capacity, data.restaurant_id);
-        const res = await this.restaurantService.createTable(newTable);
-        return {
-            "message": "created",
-            "id": res._id
-        }
-        }catch(error){
-            return{
+    async createTable(@Body() data: any) {
+        try {
+            const newTable = new TableDTO(null, data.tableNumber, data.capacity, data.restaurant_id);
+            const res = await this.restaurantService.createTable(newTable);
+            return {
+                "message": "created",
+                "id": res._id
+            }
+        } catch (error) {
+            return {
                 "meesage": `${error.message}`
             }
         }
     }
     @Get("/tables")
-    async getTablesByResto(@Body() data: any, @Res()res:Response){
-        try{
-            const tables:TableDTO[] = await this.restaurantService.getTableByResto(data.restaurant_id);
-            const transformedTables = tables.map(table=>({
+    async getTablesByResto(@Body() data: any, @Res() res: Response) {
+        try {
+            const tables: TableDTO[] = await this.restaurantService.getTableByResto(data.restaurant_id);
+            const transformedTables = tables.map(table => ({
                 id: table._id,
                 number: table._number,
                 capacity: table._capacity
             }))
             res.setHeader('Content-Type', 'application/json');
             res.send(transformedTables);
-        }catch(error){
+        } catch (error) {
             res.send({
                 "message": "error getting tables"
             })
+        }
+    }
+    @Post("/create/categorie")
+    async addCategorie(@Body() data: any, @Res()res: Response) {
+        try {
+            await this.restaurantService.addCategorie(data.restaurant_id,data.categorie)
+            res.send({
+                message: "created"
+            })
+            res.sendStatus(200)
+        }catch(error){
+            res.send({
+                message: error.message
+            })
+        }
+    }
+    @Get("/categories/:id")
+    async getCategories(@Param('id') id:string){
+        try{
+            const categories = await this.restaurantService.getCategorie(id);
+            return categories
+        }catch(error){
+            return{
+                "message": error.message
+            }
         }
     }
 }

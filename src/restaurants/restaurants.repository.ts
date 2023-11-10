@@ -75,4 +75,29 @@ export class RestaurantRepository{
             throw new Error(`Error getting tables ${error.message}`);
         }
     }
+    async getCategoriesbyResto(restaurantId:string):Promise<string[]>{
+        const queryText = 'select categorie_name from categories c inner join restaurant_categorie rc on c.id_categories = rc.categorie_id where rc.restaurant_id = $1';
+        try{
+            const result = await pool.query(queryText, [restaurantId]);
+            const categories = result.rows.map((row)=> row.categorie_name)
+            return categories;
+        }catch(error){
+            throw new Error(`error getting categories: ${error.message}`);
+        }
+    }
+    async addCategorie(restaurantId:string, categorie: string){
+        const queryCategorie = 'insert into categories (categorie_name) values ($1) returning id_categories';
+        const queryResCat = 'insert into restaurant_categorie (restaurant_id, categorie_id) values ($1, $2)';
+        try{
+            await pool.query('begin');
+           const resultCat = await pool.query(queryCategorie, [categorie]);
+           console.log(resultCat);
+           const categorieId = resultCat.rows[0].id_categories;
+           await pool.query(queryResCat, [restaurantId, categorieId]);
+           await pool.query('commit');
+        }catch(error){
+            await pool.query('rollback');
+            throw new Error(`Error adding categorie: ${error.message}`)
+        }
+    }
 }
