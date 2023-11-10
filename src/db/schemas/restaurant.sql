@@ -61,14 +61,15 @@ create table reservation_table (
 
 create table categories (
     id_categories uuid default uuid_generate_v4() primary key unique not null,
-    categorie_name varchar(256)
+    categorie_name varchar(256),
 );
 create table restaurant_categorie (
     restaurant_categorie_id uuid default uuid_generate_v4() primary key unique not null,
     restaurant_id uuid not null,
     categorie_id uuid not null,
     constraint fk_restaurant_id foreign key (restaurant_id) references restaurants (restaurant_id) on delete cascade,
-    constraint fk_categorie_id foreign key (categorie_id) references categories (id_categories) on delete cascade
+    constraint fk_categorie_id foreign key (categorie_id) references categories (id_categories) on delete cascade,
+    constraint unq_cat_per_res unique (restaurant_id, categorie_id)
 );
 
 create table favorites (

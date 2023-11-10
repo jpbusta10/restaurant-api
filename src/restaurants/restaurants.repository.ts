@@ -5,14 +5,21 @@ import { TableDTO } from "./tableDTO";
 
 @Injectable()
 export class RestaurantRepository{
-    async getAll(): Promise<RestaurantsDTO[]>{
+    async getAll(): Promise<RestaurantsDTO[]> {
         const queryText = 'select restaurant_id, res_name, adress from restaurants';
-        try{
+        const categorieQuery = 'select c.categorie_name from categories c inner join restaurant_categorie rc on c.id_categories = rc.categorie_id where rc.restaurant_id = $1';
+    
+        try {
             const result = await pool.query(queryText);
-            return result.rows.map((row)=>new RestaurantsDTO(row.restaurant_id, row.res_name, row.adress));
-        }
-        catch(error){
-            throw new Error(`unable to get restaurants: ${error.message}`)
+            const restos: RestaurantsDTO[] = result.rows.map((row) => new RestaurantsDTO(row.restaurant_id, row.res_name, row.adress));
+            await Promise.all(restos.map(async (resto) => {
+                const resultcat = await pool.query(categorieQuery, [resto._id]);
+                resto._categories = resultcat.rows.map((row) => row.categorie_name);
+            }));
+    
+            return restos;
+        } catch (error) {
+            throw new Error(`Unable to get restaurants: ${error.message}`);
         }
     }
 
@@ -33,20 +40,30 @@ export class RestaurantRepository{
     }
     async getById(id:string):Promise<RestaurantsDTO>{
         const queryText = 'select res_name, adress, manager_id from restaurants where restaurant_id = $1';
+        const categorieQuery = 'select c.categorie_name from categories c inner join restaurant_categorie rc on c.id_categories = rc.categorie_id where rc.restaurant_id = $1';
+        
         try{
             const response = await pool.query(queryText, [id]);
             const row = response.rows[0];
-            return new RestaurantsDTO(id, row.res_name, row.adress, row.manager_id)
+            const resto =  new RestaurantsDTO(id, row.res_name, row.adress, row.manager_id)
+            const responseCat = await pool.query(categorieQuery, [resto._id]);
+            resto._categories = responseCat.rows.map((row)=> row.categorie_name);
+            return resto;
         }catch(error){
             throw new Error(`Error getting resto: ${error.message}`)
         }
     }
     async getByName(name:string):Promise<RestaurantsDTO>{
         const queryText = 'select restaurant_id, adress, manager_id from restaurants where res_name = $1';
+        const categorieQuery = 'select c.categorie_name from categories c inner join restaurant_categorie rc on c.id_categories = rc.categorie_id where rc.restaurant_id = $1';
         try{
             const response = await pool.query(queryText, [name]);
             const row = response.rows[0];
-            return new RestaurantsDTO(row.restaurant_id, name, row.adress, row.manager_id);
+            const resto = new RestaurantsDTO(row.restaurant_id, name, row.adress, row.manager_id);
+            const responseCat = await pool.query(categorieQuery, [resto._id]);
+            resto._categories = responseCat.rows.map((row)=> row.categorie_name);
+            return resto;
+
         }catch(error){
             throw new Error(`Error getting resto: ${error.message}`)
         }   
@@ -73,6 +90,31 @@ export class RestaurantRepository{
             return result.rows.map((row)=> new TableDTO(row.table_id, row.table_number, row.capacity, restaurant_id))
         }catch(error){
             throw new Error(`Error getting tables ${error.message}`);
+        }
+    }
+    async getCategoriesbyResto(restaurantId:string):Promise<string[]>{
+        const queryText = 'select categorie_name from categories c inner join restaurant_categorie rc on c.id_categories = rc.categorie_id where rc.restaurant_id = $1';
+        try{
+            const result = await pool.query(queryText, [restaurantId]);
+            const categories = result.rows.map((row)=> row.categorie_name)
+            return categories;
+        }catch(error){
+            throw new Error(`error getting categories: ${error.message}`);
+        }
+    }
+    async addCategorie(restaurantId:string, categorie: string){
+        const queryCategorie = 'insert into categories (categorie_name) values ($1) returning id_categories';
+        const queryResCat = 'insert into restaurant_categorie (restaurant_id, categorie_id) values ($1, $2)';
+        try{
+            await pool.query('begin');
+           const resultCat = await pool.query(queryCategorie, [categorie]);
+           console.log(resultCat);
+           const categorieId = resultCat.rows[0].id_categories;
+           await pool.query(queryResCat, [restaurantId, categorieId]);
+           await pool.query('commit');
+        }catch(error){
+            await pool.query('rollback');
+            throw new Error(`Error adding categorie: ${error.message}`)
         }
     }
 }
