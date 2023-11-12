@@ -190,6 +190,26 @@ returns
     }
 ]
 ```
+# add categorie
+POST /restaurants/create/categorie
+body: 
+```
+ {
+        "categorie": "parrilla",
+        "restaurant_id": "4a9bb4bb-bb53-464c-9d6d-430b41ed1356"
+ }
+```
+returns:
+if added correctly:
+```
+{
+    "message": "categorie already added"
+}
+```
+# get categories by id:
+GET /restaurants/categories/:id
+returns an array of strings with the name of the categories:
+
 
 ## RESERVATIONS
 
@@ -216,6 +236,8 @@ returns:
     "id": "7e817f01-8fa5-47f3-976c-45c41737646e"
 }
 ```
+
+
 # get reservations by id 
 GET reservations/get/:id
 example reservations/get/7e817f01-8fa5-47f3-976c-45c41737646e

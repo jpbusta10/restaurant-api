@@ -77,7 +77,7 @@ export class RestaurantsController {
             }
         } catch (error) {
             return {
-                "meesage": `${error.message}`
+                "meesage": `Error: ${error.message}`
             }
         }
     }
@@ -99,28 +99,36 @@ export class RestaurantsController {
         }
     }
     @Post("/create/categorie")
-    async addCategorie(@Body() data: any, @Res()res: Response) {
+    async addCategorie(@Body() data: any, @Res() res: Response) {
         try {
-            await this.restaurantService.addCategorie(data.restaurant_id,data.categorie)
-            res.send({
-                message: "created"
-            })
-            res.sendStatus(200)
-        }catch(error){
-            res.send({
+            await this.restaurantService.addCategorie(data.restaurant_id, data.categorie);
+            return res.status(200).json({
+                message: "added"
+            });
+        } catch (error) {
+            let statusCode = 500;
+    
+            if (error.message.includes("Categorie doesn't exist")) {
+                statusCode = 404; // Not Found
+            } else if (error.message.includes('categorie already added')) {
+                statusCode = 409; // Conflict  
+            }
+    
+            return res.status(statusCode).json({
                 message: error.message
-            })
+            });
         }
     }
-    @Get("/categories/:id")
-    async getCategories(@Param('id') id:string){
-        try{
-            const categories = await this.restaurantService.getCategorie(id);
-            return categories
-        }catch(error){
-            return{
-                "message": error.message
-            }
-        }
+
+    @Get("categories/:id")
+    async getCategories(@Param('id') id: string, @Res() res: Response) {
+      try {
+        const categories = await this.restaurantService.getCategorie(id);
+        return res.status(200).json(categories);
+      } catch (error) {
+        res.send({
+            "error": `${error.message}`
+        })
+      }
     }
 }
