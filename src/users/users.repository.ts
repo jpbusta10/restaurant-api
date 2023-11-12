@@ -145,10 +145,11 @@ export class UsersRepository {
         try {
             const value = [email]
 
-            const { rows } = await pool.query(query, value)
-            if (rows.length === 0) {
+            const { rows } = await pool.query(query, value);
+            console.log("rows: "+rows);
+            if (rows === null) {
                 // Return null if the user with the specified email is not found.
-                return null;
+                throw new Error(`no user with the email: ${email}`)
             }
     
             const userRow = rows[0];
@@ -196,10 +197,13 @@ export class UsersRepository {
         const query = 'select hashed_pass from users where email = $1';
         try {
             const result = await pool.query(query, [email]);
+            if(result.rowCount === 0){
+                throw new Error(`no user with that email: ${email}`)
+            }
             const hashed_pass = result.rows[0]?.hashed_pass;
             return hashed_pass || null;
         } catch (error) {
-            throw new Error(`Error retrieving password: ${error.message}`);
+            throw new Error(`Error: ${error.message}`);
         }
     }
     async addToFavourites(userid: string, restaurant_id: string): Promise<string>{
