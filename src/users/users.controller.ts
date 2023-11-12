@@ -46,23 +46,22 @@ export class UsersController {
     @Post("/email")
     async getByEmail(@Body() JsonData: any){
         const password = JsonData.password;
+        try{
         const hashed_pass = await this.userService.getHashedPass(JsonData.email);
         console.log(hashed_pass);
         if(await argon2.verify(hashed_pass, password)){
-        console.log('verifica!!!');
         const user: UserDTO | any = await this.userService.getByEmail(JsonData.email);
         if(user){
             return user;
         }
-        else{
-            return {
-                message: "No user found with that email" 
-            }
-        }
     }
     else{
-        return{
-            message: "wrong password"
+      
+        throw new Error("wrong password");
+        
+    }}catch(error){
+        return {
+            message: `${error.message}`
         }
     }
     }
