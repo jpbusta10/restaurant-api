@@ -43,7 +43,7 @@ export class UsersController {
             "id": res.id
         }
     }
-    @Get("/email")
+    @Post("/email")
     async getByEmail(@Body() JsonData: any){
         const password = JsonData.password;
         const hashed_pass = await this.userService.getHashedPass(JsonData.email);
