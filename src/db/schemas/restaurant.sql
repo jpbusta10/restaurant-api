@@ -68,7 +68,8 @@ create table restaurant_categorie (
     restaurant_id uuid not null,
     categorie_id uuid not null,
     constraint fk_restaurant_id foreign key (restaurant_id) references restaurants (restaurant_id) on delete cascade,
-    constraint fk_categorie_id foreign key (categorie_id) references categories (id_categories) on delete cascade
+    constraint fk_categorie_id foreign key (categorie_id) references categories (id_categories) on delete cascade,
+    constraint unq_cat_per_res unique (restaurant_id, categorie_id)
 );
 
 create table favorites (
@@ -86,6 +87,19 @@ insert into roles (rol_name) values ('res_admin');
 insert into states (state_name) values ('confirmed');
 insert into states (state_name) values ('toConfirm');
 insert into states (state_name) values ('cancelled');
+insert into categories (categorie_name) values ('parrilla');
+insert into categories (categorie_name) values ('sushi');
+insert into categories (categorie_name) values ('vegano');
+insert into categories (categorie_name) values ('pasta');
+insert into categories (categorie_name) values ('italiana');
+insert into categories (categorie_name) values ('china');
+insert into categories (categorie_name) values ('rapida');
+insert into categories (categorie_name) values ('pescado');
+insert into categories (categorie_name) values ('cafeteria');
+insert into categories (categorie_name) values ('pizza');
+insert into categories (categorie_name) values ('hamburguesa');
+insert into categories (categorie_name) values ('bar');
+insert into categories (categorie_name) values ('vinoteca');
 
 CREATE OR REPLACE PROCEDURE create_reservation(
     p_user_id uuid,

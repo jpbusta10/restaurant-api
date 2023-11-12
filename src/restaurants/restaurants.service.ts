@@ -25,4 +25,10 @@ export class RestaurantService{
     getTableByResto(restaurant_id:string){
         return this.restaurantRepository.getTableByResto(restaurant_id);
     }
+    addCategorie(restaurant_id:string, categorie:string){
+        return this.restaurantRepository.addCategorie(restaurant_id, categorie);
+    }
+    getCategorie(restaurantId:string){
+        return this.restaurantRepository.getCategoriesbyResto(restaurantId);
+    }
 }
