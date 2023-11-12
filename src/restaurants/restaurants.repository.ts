@@ -96,25 +96,30 @@ export class RestaurantRepository{
         const queryText = 'select categorie_name from categories c inner join restaurant_categorie rc on c.id_categories = rc.categorie_id where rc.restaurant_id = $1';
         try{
             const result = await pool.query(queryText, [restaurantId]);
-            const categories = result.rows.map((row)=> row.categorie_name)
+            const categories = result.rows.map((row)=> row.categorie_name);
             return categories;
         }catch(error){
             throw new Error(`error getting categories: ${error.message}`);
         }
     }
     async addCategorie(restaurantId:string, categorie: string){
-        const queryCategorie = 'insert into categories (categorie_name) values ($1) returning id_categories';
+        const queryCategorie = 'select id_categories from categories where categorie_name = $1';
         const queryResCat = 'insert into restaurant_categorie (restaurant_id, categorie_id) values ($1, $2)';
         try{
-            await pool.query('begin');
            const resultCat = await pool.query(queryCategorie, [categorie]);
-           console.log(resultCat);
+           if(resultCat.rowCount === 0){
+            throw new Error('Categorie doesn`t exist');
+           }
            const categorieId = resultCat.rows[0].id_categories;
-           await pool.query(queryResCat, [restaurantId, categorieId]);
-           await pool.query('commit');
+           const addCat = await pool.query(queryResCat, [restaurantId, categorieId]);
         }catch(error){
-            await pool.query('rollback');
-            throw new Error(`Error adding categorie: ${error.message}`)
+            if(error.constraint === 'unq_cat_per_res'){
+                throw new Error('categorie already added');
+            }
+            else{
+                throw new Error(`Error adding categorie: ${error.message}`);
+            }
         }
+
     }
 }

@@ -61,7 +61,7 @@ create table reservation_table (
 
 create table categories (
     id_categories uuid default uuid_generate_v4() primary key unique not null,
-    categorie_name varchar(256),
+    categorie_name varchar(256)
 );
 create table restaurant_categorie (
     restaurant_categorie_id uuid default uuid_generate_v4() primary key unique not null,
@@ -87,6 +87,19 @@ insert into roles (rol_name) values ('res_admin');
 insert into states (state_name) values ('confirmed');
 insert into states (state_name) values ('toConfirm');
 insert into states (state_name) values ('cancelled');
+insert into categories (categorie_name) values ('parrilla');
+insert into categories (categorie_name) values ('sushi');
+insert into categories (categorie_name) values ('vegano');
+insert into categories (categorie_name) values ('pasta');
+insert into categories (categorie_name) values ('italiana');
+insert into categories (categorie_name) values ('china');
+insert into categories (categorie_name) values ('rapida');
+insert into categories (categorie_name) values ('pescado');
+insert into categories (categorie_name) values ('cafeteria');
+insert into categories (categorie_name) values ('pizza');
+insert into categories (categorie_name) values ('hamburguesa');
+insert into categories (categorie_name) values ('bar');
+insert into categories (categorie_name) values ('vinoteca');
 
 CREATE OR REPLACE PROCEDURE create_reservation(
     p_user_id uuid,
