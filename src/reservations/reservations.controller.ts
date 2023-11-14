@@ -11,7 +11,7 @@ export class ReservationsController {
     @Post("/create")
      async createReservarion(@Body() data:any){
         const newRservation = new ReservationsDTO(null, data.user_id, data.restaurant_id, data.state, data.res_size, data.due_date, 
-            data.res_date, data.comment)
+        null, data.comment)
         try{
         const responseRepo: ReservationsDTO = await this.reservationsService.createReservation(newRservation); 
         
@@ -59,4 +59,25 @@ export class ReservationsController {
         }
     }
    }
+   @Get("/get/user/:id")
+   async getbyUser(@Param('id') id: string) {
+       try {
+           const reservations = await this.reservationsService.getReservationsbyUser(id);
+           let transformedReservations = reservations.map(reservation => ({
+               id: reservation._id,
+               user_id: reservation._user_id,
+               state: reservation._state,
+               res_size: reservation._res_size,
+               due_date: reservation._due_date,
+               tables: reservation._tables,
+               comment: reservation._comment
+           }));
+           return transformedReservations;
+       } catch (error) {
+           return {
+               message: `Error: ${error.message}`
+           }
+       }
+   }
+   
 }
