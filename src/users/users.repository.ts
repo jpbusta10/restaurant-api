@@ -146,7 +146,6 @@ export class UsersRepository {
             const value = [email]
 
             const { rows } = await pool.query(query, value);
-            console.log("rows: "+rows);
             if (rows === null) {
                 // Return null if the user with the specified email is not found.
                 throw new Error(`no user with the email: ${email}`)

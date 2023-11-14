@@ -12,8 +12,7 @@ export class UsersController {
     constructor(public userService: UserService) {
     };
     @Get()
-    async listUsers(@Res() res: Response){
-        try{
+    async listUsers(@Res() res: Response) {
         const users: UserDTO[] = await this.userService.getAll();
         const transformedUsers = users.map(user => ({
             id: user._id,
@@ -32,15 +31,9 @@ export class UsersController {
         }));
         res.setHeader('Content-Type', 'application/json');
         res.send(transformedUsers);
-        }catch(error){
-            res.send({
-                "message": error.message
-            })
-        }
     }
     @Post()
-    async createUser(@Body() jsonData: any){
-        try{
+    async createUser(@Body() jsonData: any) {
         const hashedPass = await argon2.hash(jsonData.password);
         const newUser = new UserDTO(null, jsonData.userName, jsonData.firstName, jsonData.lastName, jsonData.email,
             jsonData.dni, null, null, jsonData.role, hashedPass);
@@ -48,11 +41,6 @@ export class UsersController {
         return {
             "message": "created",
             "id": res.id
-        }
-        }catch(error){
-            return{
-                "message": error.message
-            }
         }
     }
   
@@ -65,10 +53,11 @@ export class UsersController {
             if (await argon2.verify(hashedPass, password)) {
                 const user: UserDTO | any = await this.userService.getByEmail(jsonData.email);
                 if (user) {
-                    return res.status(HttpStatus.OK).json({
-                         message: 'Login successful',
-                         id: user._id
-                });
+                    // Autenticación exitosa
+                    return res.status(HttpStatus.OK).json({ 
+                        message: 'Login successful',
+                        id: user._id
+                    });
                 }
             } else {
                 throw new UnauthorizedException('Wrong password');
@@ -97,11 +86,5 @@ async addToFavourites(@Body() data: any){
             "error": error.message
         }
     }
-
-
-
-
-
 }
-    
 }
