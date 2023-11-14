@@ -117,5 +117,36 @@ export class ReservationsRepository{
             throw new Error(`Error getting reservations: ${error.message}`);
         }
     }
+    async getbyId(reservation_id: string): Promise<ReservationsDTO> {
+      const queryText = 'SELECT r.user_id, r.restaurant_id, r.res_size, s.state_name, r.due_date, r.res_date, r.comment \
+                        FROM reservations r \
+                        INNER JOIN states s ON r.state_id = s.state_id \
+                        WHERE r.reservation_id = $1';
+  
+      try {
+          const result = await pool.query(queryText, [reservation_id]);
+  
+          if (result.rows.length === 0) {
+              throw new Error('Reservation not found');
+          }
+  
+          const reservation = result.rows[0];
+          const reservations = new ReservationsDTO(
+              reservation.reservation_id,
+              reservation.user_id,
+              reservation.restaurant_id,
+              reservation.state_name,
+              reservation.res_size,
+              reservation.due_date,
+              reservation.res_date,
+              reservation.comment
+          );
+  
+          return reservations;
+      } catch (error) {
+          throw new Error(`Error getting reservation by ID: ${error.message}`);
+      }
+  }
+  
 
 }

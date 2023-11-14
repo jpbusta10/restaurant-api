@@ -18,4 +18,7 @@ export class ReservationsService{
     async getReservationsbyUser(user_id:string): Promise<ReservationsDTO[]>{
       return await this.resevationsRepository.getReservationsByUser(user_id);
     }
+    async getById(reservationId:string):Promise<ReservationsDTO>{
+      return this.resevationsRepository.getbyId(reservationId);
+    }
 }
