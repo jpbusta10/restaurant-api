@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Param, Res } from '@nestjs/common';
 import { ReservationsService } from './reservations.service';
 import { ReservationsDTO } from './reservationsDTO';
 import { Response } from 'express'
-import { transcode } from 'buffer';
+
 
 @Controller('reservations')
 export class ReservationsController {
@@ -25,7 +25,7 @@ export class ReservationsController {
             }
         }
     }
-    @Get("/get/:id")
+    @Get("/restaurant/:id")
    async listReservationByResto(@Param('id')id:string){
         try{
         const reservations:ReservationsDTO[] = await this.reservationsService.getRestaurantReservations(id);
@@ -79,5 +79,25 @@ export class ReservationsController {
            }
        }
    }
-   
+   @Get("/get/:id")
+   async getReservationById(@Param('id') id:string ){
+    try{
+        const reservation = await this.reservationsService.getById(id);
+        let transfortReservation = {
+            id: reservation._id,
+            user_id: reservation._user_id,
+            state: reservation._state,
+            res_size: reservation._res_size,
+            due_date: reservation._due_date,
+            tables: reservation._tables,
+            comment: reservation._comment
+        }
+        return transfortReservation
+    }
+    catch(error){
+        return {
+            message: error.message
+        }
+    }
+   }
 }
