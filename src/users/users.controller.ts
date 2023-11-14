@@ -54,9 +54,24 @@ export class UsersController {
                 const user: UserDTO | any = await this.userService.getByEmail(jsonData.email);
                 if (user) {
                     // Autenticación exitosa
+                    let transformedUsers = {
+                    id: user._id,
+                    userName: user._userName,
+                    firstName: user._firstName,
+                    lastName: user._lastName,
+                    email: user._email,
+                    dni: user._dni,
+                    reservations: user._reservations,
+                    favourites: user._favourites.map(favorite => ({
+                    id: favorite._id,
+                    name: favorite._name,
+                    adress: favorite._adress,
+                })),
+                role: user._role,
+                    }
                     return res.status(HttpStatus.OK).json({ 
                         message: 'Login successful',
-                        id: user._id
+                        user: user
                     });
                 }
             } else {
