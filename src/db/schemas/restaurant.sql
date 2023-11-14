@@ -42,7 +42,7 @@ create table reservations (
     user_id uuid not null,
     restaurant_id uuid not null,
     state_id uuid not null,
-    res_size integer not null,
+    res_size integer not null ,
     due_date timestamp not null,
     res_date timestamp default NOW(),
     comment varchar(256),

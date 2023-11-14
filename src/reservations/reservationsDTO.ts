@@ -7,10 +7,10 @@ export class ReservationsDTO{
     _state: string;
     _res_size: number;
     _due_date: string;
-    _res_date: string;
+    _res_date: string | null;
     _comment: string;
     _tables?: TableDTO[];
-    constructor(id: string | null, user_id: string, restaurant_id:string, state:string, res_size:number, due_date:string, res_date:string, comment: string,tables?:TableDTO[]){
+    constructor(id: string | null, user_id: string, restaurant_id:string, state:string, res_size:number, due_date:string, res_date:string | null, comment: string,tables?:TableDTO[]){
         this._id=id;
         this._user_id = user_id;
         this._restaurant_id = restaurant_id;
