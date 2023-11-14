@@ -25,9 +25,7 @@ export class ReservationsRepository{
         return newReservation;
         }catch(error){
             throw new Error(`error creatig reservation ${error.message}`)
-        }
-        
-        
+        }   
     }
     async confirmReservation(restaurant_id: string, tables: string[], reservation_id: string, state: string) {
         const addTableToReservation: string = 'insert into reservation_table (table_id, reservation_id) values ($1, $2)';
@@ -93,7 +91,31 @@ export class ReservationsRepository{
           throw new Error(`error getting reservations ${error.message}`);
         }
       }
-      
 
+      async getReservationsByUser(user_id: string): Promise<ReservationsDTO[]> {
+        const queryText = 'SELECT r.reservation_id, r.restaurant_id, s.state_name, r.res_size, r.due_date, r.res_date, r.comment \
+                           FROM reservations r \
+                           INNER JOIN states s ON r.state_id = s.state_id \
+                           WHERE r.user_id = $1';
+    
+        try {
+            const result = await pool.query(queryText, [user_id]);
+            const reservations = result.rows.map(row =>
+                new ReservationsDTO(
+                    row.reservation_id,
+                    user_id,
+                    row.restaurant_id,
+                    row.state_name,
+                    row.res_size,
+                    row.due_date,
+                    row.res_date,
+                    row.comment
+                )
+            );
+            return reservations;
+        } catch (error) {
+            throw new Error(`Error getting reservations: ${error.message}`);
+        }
+    }
 
 }
