@@ -93,10 +93,10 @@ export class RestaurantsController {
             }
         }
     }
-    @Get("/tables")
-    async getTablesByResto(@Body() data: any, @Res() res: Response) {
+    @Get("/tables/:id")
+    async getTablesByResto(@Param("id") id: string, @Res() res: Response) {
         try {
-            const tables: TableDTO[] = await this.restaurantService.getTableByResto(data.restaurant_id);
+            const tables: TableDTO[] = await this.restaurantService.getTableByResto(id);
             const transformedTables = tables.map(table => ({
                 id: table._id,
                 number: table._number,
