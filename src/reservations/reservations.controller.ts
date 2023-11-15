@@ -66,6 +66,7 @@ export class ReservationsController {
            let transformedReservations = reservations.map(reservation => ({
                id: reservation._id,
                user_id: reservation._user_id,
+               restaurant_id: reservation._restaurant_id,
                state: reservation._state,
                res_size: reservation._res_size,
                due_date: reservation._due_date,
@@ -90,6 +91,7 @@ export class ReservationsController {
             res_size: reservation._res_size,
             due_date: reservation._due_date,
             tables: reservation._tables,
+            restaurant_id: reservation._restaurant_id,
             comment: reservation._comment
         }
         return transfortReservation
