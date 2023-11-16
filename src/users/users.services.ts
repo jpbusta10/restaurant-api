@@ -25,7 +25,12 @@ export class UserService{
     addFauvorites(userId:string, restaurant_id: string){
         return this.userRepository.addToFavourites(userId, restaurant_id);
     }
-    
+    getFavouritsById(user_id:string){
+        return this.userRepository.favouritesById(user_id);
+    }
+    deleteFavourite(user_id:string, restaurant_id: string){
+        return this.userRepository.deleteFromFavorites(user_id, restaurant_id);
+    }
 
 
 }

@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Res, Param } from '@nestjs/common';
 import { UserService } from './users.services';
 import { UserDTO } from './usersDTO';
 import * as argon2 from "argon2";
 import { Response} from 'express';
 import { UnauthorizedException, HttpStatus } from '@nestjs/common';
+import { RestaurantsDTO } from 'src/restaurants/restaurantsDTO';
 
 
 
@@ -90,7 +91,6 @@ export class UsersController {
 async addToFavourites(@Body() data: any){
     try {
         const idFav = await this.userService.addFauvorites(data.user_id, data.restaurant_id);
-        console.log(idFav);
         return {
             "message": "created",
             "id": idFav
@@ -102,4 +102,40 @@ async addToFavourites(@Body() data: any){
         }
     }
 }
+@Get("/favorites/get/:id")
+async getfavbyId(@Param('id') id: string) {
+    try {
+        const result: RestaurantsDTO[] | undefined = await this.userService.getFavouritsById(id);
+
+        if (!result) {
+            throw new Error('Favourites not found');  // Lanzar un error si no se encuentran favoritos
+        }
+
+        let transformedResto = result.map(restaurant => ({
+            restaurant_id: restaurant._id,
+            name: restaurant._name,
+            address: restaurant._adress
+        }));
+        
+        return transformedResto;
+    } catch (error) {
+        return {
+            message: `Error getting favourites: ${error.message}`
+        };
+    }
+}
+@Post('fav/delete')
+async deleteFavorites(@Body() data:any){
+    try{
+        const result = await this.userService.deleteFavourite(data.user_id, data.restaurant_id);
+        return {
+            message: result
+        }
+    }catch(error){
+        return{
+        message: `Error deleting ${error.message}`
+        }
+    }
+}
+
 }
