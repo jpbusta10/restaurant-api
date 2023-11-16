@@ -87,8 +87,6 @@ export class UsersRepository {
             throw new Error(`Error retrieving users: ${error.message}`);
         }
     }
-    
-
     async createUser(newUser: UserDTO){
         const rolQuery = 'SELECT rol_id FROM roles WHERE rol_name = $1';
         const queryInsert =
@@ -216,6 +214,32 @@ export class UsersRepository {
             throw new Error(error.message)
         }
     }
+    async favouritesById(userId: string): Promise<RestaurantsDTO[]> {
+        const queryText = 'SELECT f.restaurant_id, r.res_name, r.adress FROM favorites f \
+                           INNER JOIN restaurants r ON f.restaurant_id = r.restaurant_id \
+                           WHERE f.user_id = $1';
+        try {
+            const result = await pool.query(queryText, [userId]);
+            const favourites = result.rows.map(row => new RestaurantsDTO(
+                row.restaurant_id, row.res_name, row.adress
+            ));
+            return favourites;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+    async deleteFromFavorites(user_id: string, restaurant_id: string): Promise<string> {
+        const queryText = 'DELETE FROM favorites WHERE user_id = $1 AND restaurant_id = $2';
+    
+        try {
+            await pool.query(queryText, [user_id, restaurant_id]);
+           return 'succes'
+        } catch (error) {
+            throw new Error(`Error deleting from favorites: ${error.message}`);
+        }
+    }
+    
+    
     
 }
 
