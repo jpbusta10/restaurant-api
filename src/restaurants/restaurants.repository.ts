@@ -6,12 +6,12 @@ import { TableDTO } from "./tableDTO";
 @Injectable()
 export class RestaurantRepository{
     async getAll(): Promise<RestaurantsDTO[]> {
-        const queryText = 'select restaurant_id, res_name, adress from restaurants';
+        const queryText = 'select restaurant_id, res_name, adress, manager_id from restaurants';
         const categorieQuery = 'select c.categorie_name from categories c inner join restaurant_categorie rc on c.id_categories = rc.categorie_id where rc.restaurant_id = $1';
     
         try {
             const result = await pool.query(queryText);
-            const restos: RestaurantsDTO[] = result.rows.map((row) => new RestaurantsDTO(row.restaurant_id, row.res_name, row.adress));
+            const restos: RestaurantsDTO[] = result.rows.map((row) => new RestaurantsDTO(row.restaurant_id, row.res_name, row.adress, row.manager_id));
             await Promise.all(restos.map(async (resto) => {
                 const resultcat = await pool.query(categorieQuery, [resto._id]);
                 resto._categories = resultcat.rows.map((row) => row.categorie_name);
