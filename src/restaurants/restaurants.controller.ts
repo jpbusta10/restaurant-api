@@ -143,4 +143,23 @@ export class RestaurantsController {
         })
       }
     }
+    @Post('categories/add')
+    async addCategories(@Body() data:any, @Res() res: Response){
+        try{
+            await this.restaurantService.addMultipleCategories(data.restaurant_id, data.categories);
+            return res.status(200).json({
+                message: "added"
+            })
+        }catch(error){
+            let statusCode = 500;
+            if (error.message.includes("Categorie doesn't exist")) {
+                statusCode = 404; 
+            } else if (error.message.includes('categorie already added')) {
+                statusCode = 409; 
+            }
+            return res.status(statusCode).json({
+                message: error.message
+            });
+        }
+    }
 }

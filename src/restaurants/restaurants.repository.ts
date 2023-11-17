@@ -108,13 +108,13 @@ export class RestaurantRepository{
         try{
            const resultCat = await pool.query(queryCategorie, [categorie]);
            if(resultCat.rowCount === 0){
-            throw new Error('Categorie doesn`t exist');
+            throw new Error(`Categorie doesn't exist: ${categorie}`);
            }
            const categorieId = resultCat.rows[0].id_categories;
            const addCat = await pool.query(queryResCat, [restaurantId, categorieId]);
         }catch(error){
             if(error.constraint === 'unq_cat_per_res'){
-                throw new Error('categorie already added');
+                throw new Error(`categorie already added: ${categorie}`);
             }
             else{
                 throw new Error(`Error adding categorie: ${error.message}`);
@@ -122,5 +122,34 @@ export class RestaurantRepository{
         }
 
     }
+    async addMultipleCategories(restaurant_id, categories) {
+        const queryOneCat = 'INSERT INTO restaurant_categorie (restaurant_id, categorie_id) VALUES ($1, $2)';
+        const queryCatId = 'SELECT id_categories FROM categories WHERE categorie_name = $1';
+        const client = await pool.connect();
+      
+        try {
+          await client.query('BEGIN');
+      
+          for (const category of categories) {
+            const resultId = await client.query(queryCatId, [category]);
+      
+            if (resultId.rowCount === 0) {
+              throw new Error(`Category doesn't exist: ${category}`);
+            }
+      
+            const categoryId = resultId.rows[0].id_categories;
+            await client.query(queryOneCat, [restaurant_id, categoryId]);
+          }
+      
+          await client.query('COMMIT');
+        } catch (error) {
+          await client.query('ROLLBACK');
+          console.error('Error in addMultipleCategories:', error.message);
+        } finally {
+          client.release();
+        }
+      }
+    
+   
     
 }

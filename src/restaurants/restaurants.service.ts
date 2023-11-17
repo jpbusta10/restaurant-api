@@ -31,4 +31,7 @@ export class RestaurantService{
     getCategorie(restaurantId:string){
         return this.restaurantRepository.getCategoriesbyResto(restaurantId);
     }
+    addMultipleCategories(restaurantId: string, categories: string[]){
+       return this.restaurantRepository.addMultipleCategories(restaurantId, categories)
+    }
 }
