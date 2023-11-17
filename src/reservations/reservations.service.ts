@@ -21,4 +21,7 @@ export class ReservationsService{
     async getById(reservationId:string):Promise<ReservationsDTO>{
       return this.resevationsRepository.getbyId(reservationId);
     }
+    async getTablesReservedByName(restaurant_id:string, due_date: string){
+      return this.resevationsRepository.getTablesReservedByDate(restaurant_id, due_date);
+    }
 }
