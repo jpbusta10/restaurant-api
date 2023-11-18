@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Param, Res } from '@nestjs/common';
 import { ReservationsService } from './reservations.service';
 import { ReservationsDTO } from './reservationsDTO';
 import { Response } from 'express'
+import { TableDTO } from 'src/restaurants/tableDTO';
+import { log } from 'console';
 
 
 @Controller('reservations')
@@ -46,17 +48,27 @@ export class ReservationsController {
     }
    }
    @Post("/confirm")
-   async confirReservation(@Body() data:any){
+   async confirReservation(@Body() data:any, @Res() res:Response){
     try{
-        const tables = data.tables;
-        const response = await this.reservationsService.cofirmReservation(data.restaurant_id, tables, data.reservation_id, data.state);
-        return{
+       
+        const response = await this.reservationsService.cofirmReservation(data.restaurant_id, data.tables, data.reservation_id, data.state);
+        return res.status(200).json({
             "message": "state change succesfull"
-        }
+        })
     }catch(error){
-        return{
-            "message": error.message
+        let statusCode = 500;
+        if(error.message.includes(`invalid state`)){
+            statusCode = 404;
         }
+        else if(error.message.includes('invalid table')){
+            statusCode= 404
+        }
+        else if(error.message.includes('Query values must be')){
+            statusCode=400
+        }
+        return res.status(statusCode).json({
+            message: error.message
+        })
     }
    }
    @Get("/get/user/:id")
@@ -100,6 +112,26 @@ export class ReservationsController {
         return {
             message: error.message
         }
+    }
+   }
+   @Post()
+   async getTablesbyDate(@Body() data:any, @Res() res: Response){
+    try{
+        const tables: TableDTO[] = await this.reservationsService.getTablesReservedByName(data.restaurant_id, data.due_date);
+        const transformedTables = tables.map((table)=>({
+            table_number: table._number,
+            table_id: table._id,
+            table_capacity: table._capacity
+        }))
+        return res.status(200).json(transformedTables);
+    }catch(error){
+        let statusCode = 500;
+        if(error.message.includes('no tables reserved')){
+            statusCode = 404;
+        }
+        return res.status(statusCode).json({
+            message: error.message
+        });
     }
    }
 }

@@ -9,7 +9,7 @@ export class ReservationsService{
     createReservation(newReservation: ReservationsDTO){
        return this.resevationsRepository.createReservation(newReservation);
     }
-    async cofirmReservation(restaurant_id:string, tables:string[], reservation_id:string, state:string){
+    async cofirmReservation(restaurant_id:string, tables:number[], reservation_id:string, state:string){
        return await this.resevationsRepository.confirmReservation(restaurant_id, tables, reservation_id, state);
     }
    async getRestaurantReservations(restaurant_id:string): Promise<ReservationsDTO[]>{
@@ -20,5 +20,8 @@ export class ReservationsService{
     }
     async getById(reservationId:string):Promise<ReservationsDTO>{
       return this.resevationsRepository.getbyId(reservationId);
+    }
+    async getTablesReservedByName(restaurant_id:string, due_date: string){
+      return this.resevationsRepository.getTablesReservedByDate(restaurant_id, due_date);
     }
 }

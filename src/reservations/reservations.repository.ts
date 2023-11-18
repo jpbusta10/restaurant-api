@@ -27,31 +27,40 @@ export class ReservationsRepository{
             throw new Error(`error creatig reservation ${error.message}`)
         }   
     }
-    async confirmReservation(restaurant_id: string, tables: string[], reservation_id: string, state: string) {
-        const addTableToReservation: string = 'insert into reservation_table (table_id, reservation_id) values ($1, $2)';
+    async confirmReservation(restaurant_id: string, tables: number[], reservation_id: string, state: string) {
+        const getTableIdQuery = 'select table_id from tables where table_number = $1'
+        const addTableToReservation:string = 'insert into reservation_table (table_id, reservation_id) values ($1, $2)';
         const queryState = 'select state_id from states where state_name = $1';
         const reservationStateChange = 'update reservations set state_id = $1 where reservation_id = $2';
     
-        const client = await pool.connect(); // Acquire a client from the connection pool
+        const client = await pool.connect(); 
     
         try {
-            await client.query('BEGIN'); // Start a transaction
+            await client.query('BEGIN'); 
     
             const stateQuery = await client.query(queryState, [state]);
+            if(stateQuery.rowCount=== 0){
+              throw new Error(`invalid state: ${state}` )
+            }
             const state_id = stateQuery.rows[0].state_id;
     
             await client.query(reservationStateChange, [state_id, reservation_id]);
     
             for (const table of tables) {
-                await client.query(addTableToReservation, [table, reservation_id]);
+                let tableIdResult = await client.query(getTableIdQuery, [table]);
+                if(tableIdResult.rowCount === 0){
+                  throw new Error(`invalid table: ${table}`)
+                }
+                let tableId = tableIdResult.rows[0].table_id;
+                await client.query(addTableToReservation, [tableId, reservation_id]);
             }
     
-            await client.query('COMMIT'); // Commit the transaction
+            await client.query('COMMIT'); 
         } catch (error) {
-            await client.query('ROLLBACK'); // Roll back the transaction in case of an error
+            await client.query('ROLLBACK'); 
             throw new Error(`Error confirming reservation: ${error.message}`);
         } finally {
-            client.release(); // Release the client back to the pool
+            client.release(); 
         }
     }
     
@@ -147,6 +156,22 @@ export class ReservationsRepository{
           throw new Error(`Error getting reservation by ID: ${error.message}`);
       }
   }
-  
+  async getTablesReservedByDate(restaurant_id:string, due_date: string){
+    const queryText = 'select t.table_number, t.table_id, t.capacity from reservations r inner join rt.reservation_table on r.reservation_id = rt.reservation_id\
+          inner join tables t on rt.table_id = t.table_id\
+          inner join states s on r.state_id = r.state_id\
+         where r.restaurant_id = $1 and s.state_name = "confirmed" and r.due_date = $2'
+    try{
+      const result = await pool.query(queryText, [restaurant_id,due_date]);
+      if(result.rowCount === 0 ){
+        throw new Error('no tables reserved');
+      }
+      const tables = result.rows.map(row=>new TableDTO(row.table_id, row.table_number, row.capacity));
+      return tables;
+    }catch(error){
+      throw new Error(error.message)
+    }
+
+  }
 
 }
