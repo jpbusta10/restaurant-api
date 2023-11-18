@@ -9,7 +9,7 @@ export class ReservationsService{
     createReservation(newReservation: ReservationsDTO){
        return this.resevationsRepository.createReservation(newReservation);
     }
-    async cofirmReservation(restaurant_id:string, tables:string[], reservation_id:string, state:string){
+    async cofirmReservation(restaurant_id:string, tables:number[], reservation_id:string, state:string){
        return await this.resevationsRepository.confirmReservation(restaurant_id, tables, reservation_id, state);
     }
    async getRestaurantReservations(restaurant_id:string): Promise<ReservationsDTO[]>{
