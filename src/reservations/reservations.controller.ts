@@ -114,7 +114,7 @@ export class ReservationsController {
         }
     }
    }
-   @Post()
+   @Post("get/tables/date")
    async getTablesbyDate(@Body() data:any, @Res() res: Response){
     try{
         const tables: TableDTO[] = await this.reservationsService.getTablesReservedByName(data.restaurant_id, data.due_date);
