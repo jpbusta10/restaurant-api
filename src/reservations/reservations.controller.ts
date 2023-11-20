@@ -127,7 +127,9 @@ export class ReservationsController {
     }catch(error){
         let statusCode = 500;
         if(error.message.includes('no tables reserved')){
-            statusCode = 404;
+            return {
+                tables: {}
+            }
         }
         return res.status(statusCode).json({
             message: error.message
