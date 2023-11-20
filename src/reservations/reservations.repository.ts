@@ -157,10 +157,12 @@ export class ReservationsRepository{
       }
   }
   async getTablesReservedByDate(restaurant_id:string, due_date: string){
-    const queryText = 'select t.table_number, t.table_id, t.capacity from reservations r inner join reservation_table rt on r.reservation_id = rt.reservation_id\
-          inner join tables t on rt.table_id = t.table_id\
-          inner join states s on r.state_id = r.state_id\
-         where r.restaurant_id = $1 and s.state_name = "confirmed" and r.due_date = $2'
+    const queryText = "SELECT t.table_number, t.table_id, t.capacity\
+    FROM reservations r\
+    INNER JOIN reservation_table rt ON r.reservation_id = rt.reservation_id\
+    INNER JOIN tables t ON rt.table_id = t.table_id\
+    INNER JOIN states s ON r.state_id = s.state_id\
+    WHERE r.restaurant_id = $1 AND s.state_name = 'confirmed' AND r.due_date = $2;"
     try{
       const result = await pool.query(queryText, [restaurant_id, due_date]);
       if(result.rowCount === 0 ){
