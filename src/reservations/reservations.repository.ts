@@ -157,12 +157,12 @@ export class ReservationsRepository{
       }
   }
   async getTablesReservedByDate(restaurant_id:string, due_date: string){
-    const queryText = 'select t.table_number, t.table_id, t.capacity from reservations r inner join rt.reservation_table on r.reservation_id = rt.reservation_id\
+    const queryText = 'select t.table_number, t.table_id, t.capacity from reservations r inner join reservation_table rt on r.reservation_id = rt.reservation_id\
           inner join tables t on rt.table_id = t.table_id\
           inner join states s on r.state_id = r.state_id\
          where r.restaurant_id = $1 and s.state_name = "confirmed" and r.due_date = $2'
     try{
-      const result = await pool.query(queryText, [restaurant_id,due_date]);
+      const result = await pool.query(queryText, [restaurant_id, due_date]);
       if(result.rowCount === 0 ){
         throw new Error('no tables reserved');
       }
