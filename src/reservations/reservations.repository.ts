@@ -131,15 +131,18 @@ export class ReservationsRepository{
                         FROM reservations r \
                         INNER JOIN states s ON r.state_id = s.state_id \
                         WHERE r.reservation_id = $1';
+      const tablesQueryText = 'select t.table_id, t.table_number, t.capacity, t.restaurant_id from tables t \
+                        inner join reservation_table r on t.table_id = r.table_id where r.reservation_id = $1';
   
       try {
-          const result = await pool.query(queryText, [reservation_id]);
+          const resultReservation = await pool.query(queryText, [reservation_id]);
+          
   
-          if (result.rows.length === 0) {
+          if (resultReservation.rows.length === 0) {
               throw new Error('Reservation not found');
           }
-  
-          const reservation = result.rows[0];
+          
+          const reservation = resultReservation.rows[0];
           const reservations = new ReservationsDTO(
               reservation.reservation_id,
               reservation.user_id,
@@ -150,6 +153,9 @@ export class ReservationsRepository{
               reservation.res_date,
               reservation.comment
           );
+          const resultTables = await pool.query(tablesQueryText, [reservation_id]);
+          const tables = resultTables.rows.map(row=>(new TableDTO(row.table_id, row.table_number, row.capacity)));
+          reservations._tables = tables;
   
           return reservations;
       } catch (error) {
