@@ -35,6 +35,7 @@ export class UsersController {
     }
     @Post()
     async createUser(@Body() jsonData: any) {
+        try{
         const hashedPass = await argon2.hash(jsonData.password);
         const newUser = new UserDTO(null, jsonData.userName, jsonData.firstName, jsonData.lastName, jsonData.email,
             jsonData.dni, null, null, jsonData.role, hashedPass);
@@ -43,6 +44,12 @@ export class UsersController {
             "message": "created",
             "id": res.id
         }
+     }catch(error){
+        return {
+            message: `Error: ${error.message}`
+        }
+     }
+
     }
   
     @Post("/email")
