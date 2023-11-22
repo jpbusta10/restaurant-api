@@ -3,7 +3,7 @@ import { RestaurantsDTO } from "src/restaurants/restaurantsDTO";
 
 export class UserDTO{
      _id: string;
-     _userName: string;
+    
      _firstName: string;
      _lastName: string;
      _email: string;
@@ -13,12 +13,11 @@ export class UserDTO{
      _favourites: Array<RestaurantsDTO>;
      _role: string; 
 
-    constructor(id: string | null, userName:string, firstName: string, lastName: string,
+    constructor(id: string | null, firstName: string, lastName: string,
         email:string, dni: string, reservations: Array<ReservationsDTO> | null,
         favourites: Array<RestaurantsDTO> | null, role: string, hashedPass?: string 
         ){
             this._id = id;
-            this._userName = userName;
             this._firstName = firstName;
             this._lastName = lastName;
             this._email = email;
@@ -33,12 +32,6 @@ export class UserDTO{
     }
     set id(id:string){
         this._id = id;
-    }
-    get userName(): string{
-        return this._userName;
-    }
-    set userName(userName:string){
-        this._userName = userName;
     }
     get firstName(): string{
         return this._firstName

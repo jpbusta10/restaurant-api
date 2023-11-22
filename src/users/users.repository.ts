@@ -14,7 +14,6 @@ export class UsersRepository {
                 u.first_name,
                 u.last_name,
                 u.email,
-                u.user_name,
                 u.dni,
                 ur.rol_name AS role,
                 f.restaurant_id AS favorite_restaurant_id,
@@ -41,7 +40,6 @@ export class UsersRepository {
                     first_name,
                     last_name,
                     email,
-                    user_name,
                     dni,
                     hashed_pass,
                     role,
@@ -53,7 +51,6 @@ export class UsersRepository {
                 if (!usersMap.has(user_id)) {
                     const newUser = new UserDTO(
                         user_id,
-                        user_name,
                         first_name,
                         last_name,
                         email,
@@ -90,8 +87,8 @@ export class UsersRepository {
     async createUser(newUser: UserDTO){
         const rolQuery = 'SELECT rol_id FROM roles WHERE rol_name = $1';
         const queryInsert =
-            'INSERT INTO users (first_name, last_name, email, hashed_pass, user_name, dni, rol_id) \
-            VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING user_id';
+            'INSERT INTO users (first_name, last_name, email, hashed_pass, dni, rol_id) \
+            VALUES ($1, $2, $3, $4, $5, $6) RETURNING user_id';
     
         try {
             const result = await pool.query(rolQuery, [newUser.role]);
@@ -105,7 +102,6 @@ export class UsersRepository {
                 newUser.lastName,
                 newUser.email,
                 newUser.hashedPass,
-                newUser.userName,
                 newUser.dni,
                 rolId
             ];
@@ -124,7 +120,6 @@ export class UsersRepository {
                 u.first_name,
                 u.last_name,
                 u.email,
-                u.user_name,
                 u.dni,
                 ur.rol_name AS role,
                 f.restaurant_id AS favorite_restaurant_id,
@@ -145,7 +140,6 @@ export class UsersRepository {
 
             const { rows } = await pool.query(query, value);
             if (rows === null) {
-                // Return null if the user with the specified email is not found.
                 throw new Error(`no user with the email: ${email}`)
             }
     
@@ -154,7 +148,6 @@ export class UsersRepository {
                 user_id,
                 first_name,
                 last_name,
-                user_name,
                 dni,
                 hashed_pass,
                 role,
@@ -165,7 +158,6 @@ export class UsersRepository {
     
             const user = new UserDTO(
                 user_id,
-                user_name,
                 first_name,
                 last_name,
                 email,

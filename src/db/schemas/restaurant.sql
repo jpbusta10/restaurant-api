@@ -10,7 +10,6 @@ create table users (
     last_name varchar(256) NOT NULL,
     email varchar(256) NOT NULL unique,
     hashed_pass char(97) not null,
-    user_name varchar(256) not null unique,
     dni varchar(256) not null,
     rol_id uuid not null,
     constraint fk_rol_id foreign key (rol_id) references roles (rol_id) on delete cascade
