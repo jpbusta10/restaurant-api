@@ -17,7 +17,6 @@ export class UsersController {
         const users: UserDTO[] = await this.userService.getAll();
         const transformedUsers = users.map(user => ({
             id: user._id,
-            userName: user._userName,
             firstName: user._firstName,
             lastName: user._lastName,
             email: user._email,
@@ -37,7 +36,7 @@ export class UsersController {
     async createUser(@Body() jsonData: any) {
         try{
         const hashedPass = await argon2.hash(jsonData.password);
-        const newUser = new UserDTO(null, jsonData.userName, jsonData.firstName, jsonData.lastName, jsonData.email,
+        const newUser = new UserDTO(null, jsonData.firstName, jsonData.lastName, jsonData.email,
             jsonData.dni, null, null, jsonData.role, hashedPass);
         const res = await this.userService.create(newUser);
         return {
@@ -64,7 +63,6 @@ export class UsersController {
                     // Autenticación exitosa
                     let transformedUsers = {
                     id: user._id,
-                    userName: user._userName,
                     firstName: user._firstName,
                     lastName: user._lastName,
                     email: user._email,
