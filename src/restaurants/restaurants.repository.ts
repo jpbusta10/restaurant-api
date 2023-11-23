@@ -149,7 +149,29 @@ export class RestaurantRepository{
           client.release();
         }
       }
+      async deleteCategorie(restaurant_id: string, categorie: string) {
+        const catIdQuery = 'SELECT id_categories FROM categories WHERE categorie_name = $1';
+        const deleteCate = 'DELETE FROM restaurant_categorie WHERE restaurant_id = $1 AND categorie_id = $2';
     
+        const client = await pool.connect();
+    
+        try {
+          await client.query('BEGIN');
+          const catIdResult = await client.query(catIdQuery, [categorie]);
+          if (catIdResult.rows.length === 0) {
+            throw new Error(`Category not found: ${categorie}`);
+          }
+          const catId = catIdResult.rows[0].id_categories;
+          await client.query(deleteCate, [restaurant_id, catId]);
+    
+          await client.query('COMMIT');
+        } catch (error) {
+          await client.query('ROLLBACK');
+          throw new Error(`Error deleting category: ${error.message}`);
+        } finally {
+          client.release();
+        }
+      }
    
     
 }
