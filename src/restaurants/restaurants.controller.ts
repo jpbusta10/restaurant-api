@@ -165,7 +165,7 @@ export class RestaurantsController {
     @Post('categories/delete')
     async deleteCategorie(@Body() data: any, @Res() res: Response){
         try{
-             await this.restaurantService.deleteCategorie(data.restaurant_id, data.categorie);
+             await this.restaurantService.deleteCategorie(data.restaurant_id, data.categories);
             res.status(200).json({
                 message: "deleted"
             })

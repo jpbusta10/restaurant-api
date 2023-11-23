@@ -34,7 +34,7 @@ export class RestaurantService{
     addMultipleCategories(restaurantId: string, categories: string[]){
        return this.restaurantRepository.addMultipleCategories(restaurantId, categories)
     }
-    deleteCategorie(restaurant_id: string, categorie: string){
-        return this.restaurantRepository.deleteCategorie(restaurant_id, categorie);
+    deleteCategorie(restaurant_id: string, categories: string[]){
+        return this.restaurantRepository.deleteCategories(restaurant_id, categories);
     }
 }

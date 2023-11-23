@@ -149,29 +149,33 @@ export class RestaurantRepository{
           client.release();
         }
       }
-      async deleteCategorie(restaurant_id: string, categorie: string) {
-        const catIdQuery = 'SELECT id_categories FROM categories WHERE categorie_name = $1';
+      async deleteCategories(restaurant_id: string, categories: string[]) {
+        const catIdQuery = 'SELECT id_categories FROM categories WHERE categorie_name = ANY($1)';
         const deleteCate = 'DELETE FROM restaurant_categorie WHERE restaurant_id = $1 AND categorie_id = $2';
-    
+      
         const client = await pool.connect();
-    
+      
         try {
           await client.query('BEGIN');
-          const catIdResult = await client.query(catIdQuery, [categorie]);
+          const catIdResult = await client.query(catIdQuery, [categories]);
+          
           if (catIdResult.rows.length === 0) {
-            throw new Error(`Category not found: ${categorie}`);
+            throw new Error(`Categories not found: ${categories.join(', ')}`);
           }
-          const catId = catIdResult.rows[0].id_categories;
-          await client.query(deleteCate, [restaurant_id, catId]);
-    
+      
+          for (const catRow of catIdResult.rows) {
+            const catId = catRow.id_categories;
+            await client.query(deleteCate, [restaurant_id, catId]);
+          }
+      
           await client.query('COMMIT');
         } catch (error) {
           await client.query('ROLLBACK');
-          throw new Error(`Error deleting category: ${error.message}`);
+          throw new Error(`Error deleting categories: ${error.message}`);
         } finally {
           client.release();
         }
       }
-   
+      
     
 }
