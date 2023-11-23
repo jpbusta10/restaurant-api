@@ -162,4 +162,17 @@ export class RestaurantsController {
             });
         }
     }
+    @Post('categories/delete')
+    async deleteCategorie(@Body() data: any, @Res() res: Response){
+        try{
+             await this.restaurantService.deleteCategorie(data.restaurant_id, data.categorie);
+            res.status(200).json({
+                message: "deleted"
+            })
+        }catch(error){
+            return res.status(500).json({
+                message: error.message
+            });
+        }
+    }
 }
