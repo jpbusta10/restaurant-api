@@ -136,4 +136,17 @@ export class ReservationsController {
         });
     }
    }
+   @Get('cancell/:id')
+   async cancellReservation(@Param('id') id: string, res: Response){
+    try{
+        await this.reservationsService.cancellReservations(id);
+        res.status(200).json({
+            message: "cancelled"
+        })
+    }catch(error){
+        res.status(500).json({
+            message: error.message
+        })
+    }
+   }
 }

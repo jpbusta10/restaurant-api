@@ -24,4 +24,7 @@ export class ReservationsService{
     async getTablesReservedByName(restaurant_id:string, due_date: string){
       return this.resevationsRepository.getTablesReservedByDate(restaurant_id, due_date);
     }
+    async cancellReservations(reservation_id: string){
+      return this.resevationsRepository.cancellReservations(reservation_id);
+    }
 }
