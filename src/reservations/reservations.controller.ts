@@ -137,7 +137,7 @@ export class ReservationsController {
     }
    }
    @Get('cancell/:id')
-   async cancellReservation(@Param('id') id: string, res: Response){
+   async cancellReservation(@Param('id') id: string,@Res() res: Response){
     try{
         await this.reservationsService.cancellReservations(id);
         res.status(200).json({
