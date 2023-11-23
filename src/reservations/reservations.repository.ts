@@ -181,5 +181,30 @@ export class ReservationsRepository{
     }
 
   }
+  async cancellReservations(reservation_id: string) {
+    const state_idQuery = 'SELECT state_id FROM states WHERE state_name = $1';
+    const updateReservationQuery = 'UPDATE reservations SET state_id = $1 WHERE reservation_id = $2';
+  
+    const client = await pool.connect();
+  
+    try {
+      await client.query('BEGIN');
+      
+      const stateIdResult = await client.query(state_idQuery, ['cancelled']);
+      if (stateIdResult.rows.length === 0) {
+        throw new Error('State not found: "cancelled"');
+      }
+      const stateId = stateIdResult.rows[0].state_id;
+
+      await client.query(updateReservationQuery, [stateId, reservation_id]);
+  
+      await client.query('COMMIT');
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw new Error(`Error cancelling reservation: ${error.message}`);
+    } finally {
+      client.release();
+    }
+  }
 
 }
